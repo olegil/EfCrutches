@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="EfCrutches" Class="Linq2SqlDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|\EfCrutches.mdf;Integrated Security=True;Connect Timeout=30" SettingsObjectName="Linq2Sql.Properties.Settings" SettingsPropertyName="EfCrutchesConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Account" Member="Accounts">
+    <Type Name="Account">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="Account_MessageFolder" Member="MessageFolders" ThisKey="Id" OtherKey="Owner_Id" Type="MessageFolder" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ThreadsInFolders" Member="ThreadsInFolders">
+    <Type Name="ThreadsInFolder">
+      <Column Name="MessageFolder_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MessageThread_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="MessageFolder_ThreadsInFolder" Member="MessageFolder" ThisKey="MessageFolder_Id" OtherKey="Id" Type="MessageFolder" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Thread_ThreadsInFolder" Member="Thread" Storage="_MessageThread" ThisKey="MessageThread_Id" OtherKey="Id" Type="Thread" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Message" Member="Messages">
+    <Type Name="Message">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IsRead" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Thread_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Owner_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Sender_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Receiver_Id" Storage="_Reciever_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Account_Message" Member="Owner" Storage="_Account" ThisKey="Owner_Id" OtherKey="Id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Message1" Member="Reciever" Storage="_Account1" ThisKey="Receiver_Id" OtherKey="Id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Message2" Member="Sender" Storage="_Account2" ThisKey="Sender_Id" OtherKey="Id" Type="Account" IsForeignKey="true" />
+      <Association Name="Thread_Message" Member="Thread" Storage="_MessageThread" ThisKey="Thread_Id" OtherKey="Id" Type="Thread" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MessageFolder" Member="MessageFolders">
+    <Type Name="MessageFolder">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Owner_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="MessageFolder_ThreadsInFolder" Member="ThreadsInFolders" ThisKey="Id" OtherKey="MessageFolder_Id" Type="ThreadsInFolder" />
+      <Association Name="Account_MessageFolder" Member="Account" ThisKey="Owner_Id" OtherKey="Id" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MessageThread" Member="Threads">
+    <Type Name="Thread">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Subject" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Association Name="Thread_ThreadsInFolder" Member="ThreadsInFolders" ThisKey="Id" OtherKey="MessageThread_Id" Type="ThreadsInFolder" />
+      <Association Name="Thread_Message" Member="Messages" ThisKey="Id" OtherKey="Thread_Id" Type="Message" />
+    </Type>
+  </Table>
+</Database>
